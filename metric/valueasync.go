@@ -15,7 +15,7 @@ func CollectMetric() AsyncVal {
 	m := AsyncVal{}
 
 	t := time.Now()
-	m.Timestamp = "Zeit ist " + t.Format(time.UnixDate)
+	m.Timestamp = t.Format(time.UnixDate)
 
 	m.RandVal = rand.Intn(100)
 

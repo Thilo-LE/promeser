@@ -27,14 +27,15 @@ func newMetricOne(reg prometheus.Registerer) *metrics {
 
 func newMetricRandom(reg prometheus.Registerer) *metrics {
 	m := &metrics{
-		keyValueRandom: promauto.With(reg).NewGaugeVec(prometheus.GaugeOpts{
-			Namespace: namespace,
-			Name:      "async_value_random",
-			Help:      "Every 5 seconds will be generate a random integer between 0 and 100",
-		}, []string{"kljsdf"},
+		keyValueRandom: *promauto.With(reg).NewGaugeVec(
+			prometheus.GaugeOpts{
+				Namespace: namespace,
+				Name:      "async_value_random",
+				Help:      "Every 5 seconds will be generate a random integer between 0 and 100.",
+			},
+			[]string{"timestamp"},
 		),
 	}
-
 	return m
 }
 
@@ -50,8 +51,8 @@ func recordMetricOne(m *metrics) {
 func recordMetricRandom(m *metrics) {
 	go func() {
 		for {
-			x := CollectMetric().RandVal
-			m.keyValueRandom.Set(float64(x))
+			x := CollectMetric()
+			m.keyValueRandom.With(prometheus.Labels{"timestamp": x.Timestamp}).Set(float64(x.RandVal))
 			time.Sleep(5 * time.Second)
 		}
 	}()

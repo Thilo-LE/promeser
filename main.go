@@ -5,12 +5,14 @@ import (
 	"net/http"
 
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/collectors"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/thilo-le/promeser/metric"
 )
 
 const (
-	url = "localhost:8080"
+	url                 = "localhost:8080"
+	withGoStdCollectors = false
 )
 
 func main() {
@@ -19,6 +21,14 @@ func main() {
 	reg := prometheus.NewRegistry()
 	metric.RegisterMetricAsync(reg)
 
-	http.Handle("/metrics", promhttp.HandlerFor(reg, promhttp.HandlerOpts{}))
+	if withGoStdCollectors {
+		reg.MustRegister(collectors.NewBuildInfoCollector())
+		reg.MustRegister(collectors.NewGoCollector())
+	}
+
+	reg.MustRegister(metric.NewSyncMetrics())
+
+	http.Handle("/metrics", promhttp.HandlerFor(reg, promhttp.HandlerOpts{Registry: reg}))
+
 	http.ListenAndServe(url, nil)
 }

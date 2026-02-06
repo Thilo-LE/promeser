@@ -19,14 +19,14 @@ func main() {
 	log.Printf("Start metric server on http://%s/metrics", url)
 
 	reg := prometheus.NewRegistry()
+
 	metric.RegisterMetricAsync(reg)
+	reg.MustRegister(metric.NewSyncMetrics())
 
 	if withGoStdCollectors {
 		reg.MustRegister(collectors.NewBuildInfoCollector())
 		reg.MustRegister(collectors.NewGoCollector())
 	}
-
-	reg.MustRegister(metric.NewSyncMetrics())
 
 	http.Handle("/metrics", promhttp.HandlerFor(reg, promhttp.HandlerOpts{Registry: reg}))
 

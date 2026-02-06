@@ -1,5 +1,6 @@
 # promeser
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/Thilo-LE/promeser)](https://goreportcard.com/report/github.com/Thilo-LE/promeser) 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)  
 
 Prometheus metric server scenarios
